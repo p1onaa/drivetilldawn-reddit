@@ -1,0 +1,21 @@
+{
+  "name": "drivetilldawn",
+  "version": "1.0.0",
+  "description": "A night driving game built with Three.js",
+  "main": "src/main.js",
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview"
+  },
+  "dependencies": {
+    "three": "^0.158.0"
+  },
+  "devDependencies": {
+    "vite": "^5.0.0"
+  },
+  "keywords": ["threejs", "game", "driving", "3d"],
+  "author": "",
+  "license": "MIT"
+}

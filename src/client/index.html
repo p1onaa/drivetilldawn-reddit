@@ -1,0 +1,229 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <link rel="icon" type="image/svg+xml" href="/vite.svg" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Drive Till Dawn</title>
+    <style>
+      body {
+        margin: 0;
+        padding: 0;
+        overflow: hidden;
+        background: #000;
+        font-family: Arial, sans-serif;
+      }
+      
+      #gameContainer {
+        position: relative;
+        width: 100vw;
+        height: 100vh;
+      }
+      
+      #score {
+        position: absolute;
+        top: 30px;
+        left: 30px;
+        color: white;
+        z-index: 100;
+        background: rgba(0, 0, 0, 0.7);
+        padding: 15px 25px;
+        border-radius: 8px;
+        font-size: 24px;
+        font-weight: bold;
+        border: 2px solid rgba(255, 255, 255, 0.2);
+        text-shadow: 0 0 10px rgba(255, 255, 255, 0.5);
+      }
+      
+      #speedIndicator {
+        position: absolute;
+        top: 30px;
+        right: 30px;
+        color: white;
+        z-index: 100;
+        background: rgba(0, 0, 0, 0.7);
+        padding: 15px 25px;
+        border-radius: 8px;
+        font-size: 18px;
+        font-weight: bold;
+        border: 2px solid rgba(255, 255, 255, 0.2);
+        text-shadow: 0 0 10px rgba(255, 255, 255, 0.5);
+      }
+      
+      #loading {
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        z-index: 200;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+      }
+      
+      #loading img {
+        width: 120px;
+        height: 120px;
+        object-fit: contain;
+        animation: pulse 2s ease-in-out infinite;
+      }
+      
+      @keyframes pulse {
+        0%, 100% {
+          opacity: 0.7;
+          transform: scale(1);
+        }
+        50% {
+          opacity: 1;
+          transform: scale(1.05);
+        }
+      }
+      
+      /* Arrow Control Buttons - Hidden by default */
+      .control-button {
+        position: absolute;
+        bottom: 30px;
+        width: 70px;
+        height: 70px;
+        background: rgba(0, 0, 0, 0.7);
+        border: 2px solid rgba(255, 255, 255, 0.3);
+        border-radius: 50%;
+        display: none; /* Hidden by default */
+        align-items: center;
+        justify-content: center;
+        cursor: pointer;
+        z-index: 100;
+        transition: all 0.2s ease;
+        user-select: none;
+        -webkit-user-select: none;
+        -webkit-tap-highlight-color: transparent;
+        box-shadow: 0 0 15px rgba(255, 255, 255, 0.1);
+      }
+      
+      .control-button.visible {
+        display: flex; /* Show when visible class is added */
+      }
+      
+      .control-button:hover {
+        background: rgba(0, 0, 0, 0.9);
+        border-color: rgba(255, 255, 255, 0.6);
+        transform: scale(1.1);
+        box-shadow: 0 0 25px rgba(255, 255, 255, 0.3);
+      }
+      
+      .control-button:active,
+      .control-button.pressed {
+        transform: scale(0.95);
+        background: rgba(255, 255, 255, 0.1);
+        border-color: rgba(255, 255, 255, 0.8);
+        box-shadow: 0 0 30px rgba(255, 255, 255, 0.5);
+      }
+      
+      #leftArrow {
+        left: 30px;
+      }
+      
+      #rightArrow {
+        right: 30px;
+      }
+      
+      /* Arrow shapes using CSS */
+      .arrow {
+        width: 0;
+        height: 0;
+        transition: all 0.2s ease;
+      }
+      
+      .arrow-left {
+        border-top: 12px solid transparent;
+        border-bottom: 12px solid transparent;
+        border-right: 18px solid rgba(255, 255, 255, 0.8);
+        margin-right: 3px;
+      }
+      
+      .arrow-right {
+        border-top: 12px solid transparent;
+        border-bottom: 12px solid transparent;
+        border-left: 18px solid rgba(255, 255, 255, 0.8);
+        margin-left: 3px;
+      }
+      
+      .control-button:hover .arrow-left {
+        border-right-color: rgba(255, 255, 255, 1);
+        transform: translateX(-2px);
+      }
+      
+      .control-button:hover .arrow-right {
+        border-left-color: rgba(255, 255, 255, 1);
+        transform: translateX(2px);
+      }
+      
+      .control-button:active .arrow-left,
+      .control-button:active .arrow-right,
+      .control-button.pressed .arrow-left,
+      .control-button.pressed .arrow-right {
+        filter: drop-shadow(0 0 8px rgba(255, 255, 255, 0.8));
+      }
+      
+      .control-button.pressed .arrow-left {
+        border-right-color: rgba(255, 255, 255, 1);
+        transform: translateX(-2px);
+      }
+      
+      .control-button.pressed .arrow-right {
+        border-left-color: rgba(255, 255, 255, 1);
+        transform: translateX(2px);
+      }
+      
+      /* Mobile responsiveness */
+      @media (max-width: 768px) {
+        .control-button {
+          width: 80px;
+          height: 80px;
+          bottom: 20px;
+        }
+        
+        #leftArrow {
+          left: 20px;
+        }
+        
+        #rightArrow {
+          right: 20px;
+        }
+        
+        .arrow-left {
+          border-top: 14px solid transparent;
+          border-bottom: 14px solid transparent;
+          border-right: 20px solid rgba(255, 255, 255, 0.8);
+        }
+        
+        .arrow-right {
+          border-top: 14px solid transparent;
+          border-bottom: 14px solid transparent;
+          border-left: 20px solid rgba(255, 255, 255, 0.8);
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div id="gameContainer">
+      <div id="loading">
+        <img src="/assets/bolt.png" alt="Bolt" />
+      </div>
+      <div id="score" style="display: none;">
+      </div>
+      <div id="speedIndicator" style="display: none;">
+      </div>
+      
+      <!-- Arrow Control Buttons - Hidden by default -->
+      <div id="leftArrow" class="control-button">
+        <div class="arrow arrow-left"></div>
+      </div>
+      <div id="rightArrow" class="control-button">
+        <div class="arrow arrow-right"></div>
+      </div>
+    </div>
+    <script type="module" src="/src/main.js"></script>
+  </body>
+</html>
